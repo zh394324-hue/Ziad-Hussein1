@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطعم الشيف - أشهى المأكولات</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Cairo', sans-serif; }
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%),
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920') center/cover;
+        }
+        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .cart-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .secret-btn { opacity: 0.1; transition: opacity 0.3s; }
+        .secret-btn:hover { opacity: 1; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-lg z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-utensils text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">مطعم الشيف</h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#menu" class="text-gray-600 hover:text-orange-500 transition font-semibold">القائمة</a>
+                <a href="#about" class="text-gray-600 hover:text-orange-500 transition font-semibold">من نحن</a>
+                <a href="#contact" class="text-gray-600 hover:text-orange-500 transition font-semibold">اتصل بنا</a>
+                <button onclick="toggleCart()" class="relative bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center text-white text-center">
+        <div class="fade-in">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">مرحباً بكم في مطعم الشيف</h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-200">نقدم لكم أشهى المأكولات بأيدي أمهر الطهاة</p>
+            <a href="#menu" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-xl font-bold transition transform hover:scale-105 inline-block">
+                <i class="fas fa-book-open ml-2"></i> استكشف القائمة
+            </a>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4 text-gray-800">قائمة الطعام</h2>
+            <p class="text-gray-500 text-center mb-12">اختر من بين تشكيلتنا الواسعة</p>
+            
+            <!-- Categories -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button onclick="filterMenu('all')" class="category-btn active px-6 py-3 rounded-full bg-orange-500 text-white font-semibold transition" data-cat="all">الكل</button>
+                <button onclick="filterMenu('burger')" class="category-btn px-6 py-3 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-orange-500 hover:text-white transition" data-cat="burger">برجر</button>
+                <button onclick="filterMenu('pizza')" class="category-btn px-6 py-3 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-orange-500 hover:text-white transition" data-cat="pizza">بيتزا</button>
+                <button onclick="filterMenu('chicken')" class="category-btn px-6 py-3 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-orange-500 hover:text-white transition" data-cat="chicken">دجاج</button>
+                <button onclick="filterMenu('drinks')" class="category-btn px-6 py-3 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-orange-500 hover:text-white transition" data-cat="drinks">مشروبات</button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Items will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=600" alt="Kitchen" class="rounded-2xl shadow-2xl">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-4xl font-bold mb-6 text-gray-800">من نحن</h2>
+                    <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+                        نحن في مطعم الشيف نؤمن بأن الطعام الجيد يجمع الناس. منذ عام 2010، نقدم أشهى المأكولات المحضرة بحب وعناية من أفضل المكونات الطازجة.
+                    </p>
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-orange-50 p-4 rounded-xl">
+                            <h3 class="text-3xl font-bold text-orange-500">+15</h3>
+                            <p class="text-gray-600">سنة خبرة</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-xl">
+                            <h3 class="text-3xl font-bold text-orange-500">+50K</h3>
+                            <p class="text-gray-600">عميل سعيد</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-xl">
+                            <h3 class="text-3xl font-bold text-orange-500">+100</h3>
+                            <p class="text-gray-600">وصفة مميزة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12">اتصل بنا</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-gray-800 p-8 rounded-2xl">
+                    <i class="fas fa-map-marker-alt text-4xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">العنوان</h3>
+                    <p class="text-gray-400">شارع الملك فهد، الرياض</p>
+                </div>
+                <div class="bg-gray-800 p-8 rounded-2xl">
+                    <i class="fas fa-phone text-4xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">الهاتف</h3>
+                    <p class="text-gray-400">+966 50 123 4567</p>
+                </div>
+                <div class="bg-gray-800 p-8 rounded-2xl">
+                    <i class="fas fa-clock text-4xl text-orange-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">ساعات العمل</h3>
+                    <p class="text-gray-400">يومياً 10 صباحاً - 12 منتصف الليل</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer with Secret Admin Button -->
+    <footer class="bg-gray-950 text-gray-400 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2024 مطعم الشيف - جميع الحقوق محفوظة</p>
+            <!-- Secret Admin Button -->
+            <button onclick="showAdminLogin()" class="secret-btn mt-4 text-xs text-gray-700 hover:text-orange-500">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed top-0 left-0 w-full md:w-96 h-full bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50">
+        <div class="flex flex-col h-full">
+            <div class="flex justify-between items-center p-6 bg-orange-500 text-white">
+                <h3 class="text-2xl font-bold"><i class="fas fa-shopping-cart ml-2"></i>سلة المشتريات</h3>
+                <button onclick="toggleCart()" class="text-2xl hover:text-gray-200"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="p-6 bg-gray-50 border-t">
+                <div class="flex justify-between text-xl font-bold mb-4">
+                    <span>الإجمالي:</span>
+                    <span id="cartTotal">0 ر.س</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold text-lg transition">
+                    <i class="fas fa-check ml-2"></i>إتمام الطلب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" onclick="toggleCart()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 fade-in">
+            <h3 class="text-2xl font-bold mb-6 text-center"><i class="fas fa-clipboard-list text-orange-500 ml-2"></i>تأكيد الطلب</h3>
+            <form id="orderForm" onsubmit="submitOrder(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">الاسم الكامل</label>
+                    <input type="text" id="customerName" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">رقم الهاتف</label>
+                    <input type="tel" id="customerPhone" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">العنوان</label>
+                    <textarea id="customerAddress" required rows="3" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">ملاحظات (اختياري)</label>
+                    <textarea id="orderNotes" rows="2" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold transition">
+                        <i class="fas fa-paper-plane ml-2"></i>إرسال الطلب
+                    </button>
+                    <button type="button" onclick="closeCheckout()" class="px-6 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-bold transition">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-8 fade-in">
+            <h3 class="text-2xl font-bold mb-6 text-center"><i class="fas fa-lock text-orange-500 ml-2"></i>دخول الإدارة</h3>
+            <form onsubmit="adminLogin(event)">
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">رمز الدخول</label>
+                    <input type="password" id="adminCode" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-center text-2xl tracking-widest">
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition">دخول</button>
+                    <button type="button" onclick="closeAdminLogin()" class="px-6 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-bold transition">إلغاء</button>
+                </div>
+            </form>
+            <p class="text-xs text-gray-400 text-center mt-4">الرمز الافتراضي: 1234</p>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-8 py-4 rounded-xl shadow-2xl hidden z-50 fade-in">
+        <i class="fas fa-check-circle ml-2"></i>
+        <span id="toastMessage">تم بنجاح!</span>
+    </div>
+
+    <script>
+        // Menu Data
+        const menuItems = [
+            { id: 1, name: 'برجر كلاسيك', price: 35, category: 'burger', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', desc: 'برجر لحم مع جبنة وخضروات طازجة' },
+            { id: 2, name: 'برجر دجاج', price: 30, category: 'burger', image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400', desc: 'برجر دجاج مقرمش مع صلصة خاصة' },
+            { id: 3, name: 'برجر مزدوج', price: 50, category: 'burger', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400', desc: 'طبقتان من اللحم مع جبنة مزدوجة' },
+            { id: 4, name: 'بيتزا مارجريتا', price: 45, category: 'pizza', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400', desc: 'صلصة طماطم وجبنة موزاريلا وريحان' },
+            { id: 5, name: 'بيتزا بيبروني', price: 55, category: 'pizza', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400', desc: 'بيبروني حار مع جبنة إضافية' },
+            { id: 6, name: 'بيتزا خضار', price: 40, category: 'pizza', image: 'https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=400', desc: 'تشكيلة خضروات طازجة' },
+            { id: 7, name: 'دجاج مقلي', price: 40, category: 'chicken', image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400', desc: '8 قطع دجاج مقرمش' },
+            { id: 8, name: 'أجنحة حارة', price: 35, category: 'chicken', image: 'https://images.unsplash.com/photo-1608039829572-9b0189c96a58?w=400', desc: 'أجنحة دجاج بالصلصة الحارة' },
+            { id: 9, name: 'شاورما دجاج', price: 25, category: 'chicken', image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400', desc: 'شاورما دجاج مع الثومية' },
+            { id: 10, name: 'عصير برتقال', price: 12, category: 'drinks', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400', desc: 'عصير برتقال طبيعي طازج' },
+            { id: 11, name: 'كولا', price: 8, category: 'drinks', image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400', desc: 'مشروب غازي بارد' },
+            { id: 12, name: 'موهيتو', price: 15, category: 'drinks', image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400', desc: 'موهيتو منعش بالنعناع والليمون' },
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Render Menu
+        function renderMenu(category = 'all') {
+            const grid = document.getElementById('menuGrid');
+            const filtered = category === 'all' ? menuItems : menuItems.filter(item => item.category === category);
+            
+            grid.innerHTML = filtered.map(item => `
+                <div class="menu-card bg-white rounded-2xl overflow-hidden shadow-lg transition duration-300" data-category="${item.category}">
+                    <div class="relative">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                        <span class="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">${item.price} ر.س</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${item.name}</h3>
+                        <p class="text-gray-500 mb-4">${item.desc}</p>
+                        <button onclick="addToCart(${item.id})" class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3 rounded-xl font-bold transition">
+                            <i class="fas fa-plus ml-2"></i>أضف للسلة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Menu
+        function filterMenu(category) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            document.querySelector(`[data-cat="${category}"]`).classList.remove('bg-gray-200', 'text-gray-700');
+            document.querySelector(`[data-cat="${category}"]`).classList.add('bg-orange-500', 'text-white');
+            renderMenu(category);
+        }
+
+        // Cart Functions
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            const existingItem = cart.find(i => i.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            showToast('تمت الإضافة للسلة');
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            saveCart();
+            updateCartUI();
+        }
+
+        function updateQuantity(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = `${totalPrice} ر.س`;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="text-center text-gray-500 py-12"><i class="fas fa-shopping-cart text-4xl mb-4"></i><p>السلة فارغة</p></div>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-4 mb-4">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">${item.name}</h4>
+                            <p class="text-orange-500 font-bold">${item.price} ر.س</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300 transition">-</button>
+                            <span class="font-bold w-8 text-center">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition">+</button>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 text-xl"><i class="fas fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('cartOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Checkout Functions
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('السلة فارغة!');
+                return;
+            }
+            toggleCart();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            
+            const order = {
+                id: Date.now(),
+                customer: {
+                    name: document.getElementById('customerName').value,
+                    phone: document.getElementById('customerPhone').value,
+                    address: document.getElementById('customerAddress').value
+                },
+                notes: document.getElementById('orderNotes').value,
+                items: [...cart],
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                status: 'جديد',
+                date: new Date().toLocaleString('ar-SA')
+            };
+
+            // Save order to localStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.unshift(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Clear cart and form
+            cart = [];
+            saveCart();
+            updateCartUI();
+            document.getElementById('orderForm').reset();
+            closeCheckout();
+            
+            showToast('تم إرسال طلبك بنجاح! سنتواصل معك قريباً');
+        }
+
+        // Admin Functions
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        function adminLogin(e) {
+            e.preventDefault();
+            const code = document.getElementById('adminCode').value;
+            const adminCode = localStorage.getItem('adminCode') || '1234';
+            
+            if (code === adminCode) {
+                localStorage.setItem('adminAuth', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                showToast('رمز الدخول غير صحيح!');
+            }
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            updateCartUI();
+        });
+    </script>
+</body>
+</html>
