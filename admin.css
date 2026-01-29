@@ -513,5 +513,3 @@ tr:hover td { background: #f9fafb; }
     .stats-grid { grid-template-columns: 1fr; }
     .menu-grid { grid-template-columns: 1fr; }
 }
-
-}
